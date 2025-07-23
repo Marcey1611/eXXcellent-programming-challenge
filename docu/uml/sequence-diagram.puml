@@ -1,0 +1,27 @@
+@startuml
+actor User
+participant ApplicationRunner
+participant CsvReader
+participant WeatherDataParser
+participant WeatherRecordFactory
+participant WeatherDataRecord
+participant DataAnalyzer
+
+User -> ApplicationRunner: run("weather.csv")
+
+ApplicationRunner -> CsvReader: readFile("weather.csv")
+CsvReader --> ApplicationRunner: List<String> lines
+
+ApplicationRunner -> WeatherDataParser: parseLines(lines)
+loop for each line
+    WeatherDataParser -> WeatherRecordFactory: createFromTokens(tokens)
+    WeatherRecordFactory -> WeatherDataRecord: constructor(day, max, min)
+    WeatherRecordFactory --> WeatherDataParser: WeatherDataRecord
+end
+WeatherDataParser --> ApplicationRunner: List<WeatherDataRecord>
+
+ApplicationRunner -> DataAnalyzer: findWithSmallestDiff(records)
+DataAnalyzer --> ApplicationRunner: WeatherDataRecord
+
+ApplicationRunner -> User: print getLabel() of result
+@enduml
