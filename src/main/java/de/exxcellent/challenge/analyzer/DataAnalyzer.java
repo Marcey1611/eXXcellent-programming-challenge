@@ -27,7 +27,7 @@ public class DataAnalyzer<T extends DataRecord> {
             throw new IllegalArgumentException("No records provided.");
         }
 
-        final Comparator<T> byDiff = Comparator.comparingInt(DataRecord::diff);
+        final Comparator<T> byDiff = Comparator.comparingInt(DataRecord::getDiff);
         return Collections.min(records, byDiff);
     }
 }

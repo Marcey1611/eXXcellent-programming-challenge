@@ -1,7 +1,7 @@
 package de.exxcellent.challenge.analyzer;
 
 import de.exxcellent.challenge.model.DataRecord;
-import de.exxcellent.challenge.model.DummyRecord;
+import de.exxcellent.challenge.dummies.DummyRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -40,8 +40,8 @@ public class DataAnalyzerTest {
 
         final DataRecord result = this.analyzer.findWithSmallestDiff(records);
 
-        assertEquals("B", result.label());
-        assertEquals(5, result.diff());
+        assertEquals("B", result.getLabel());
+        assertEquals(5, result.getDiff());
     }
 
     /**

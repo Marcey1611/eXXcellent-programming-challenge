@@ -11,7 +11,7 @@ public interface DataRecord {
      *
      * @return the label of the record
      */
-    String label();
+    String getLabel();
 
     /**
      * Gets the difference value of the data record.
@@ -19,5 +19,5 @@ public interface DataRecord {
      *
      * @return the difference value of the record
      */
-    int diff();
+    int getDiff();
 }
