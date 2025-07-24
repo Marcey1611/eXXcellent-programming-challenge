@@ -6,6 +6,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,15 +25,23 @@ public class CsvReader {
      * @throws RuntimeException if there is an error reading the file.
      */
     public List<String> readFile(final String fileName) {
+        final List<String> lines;
+        final String extendedFileName = String.format(FILE_NAME_EXTENSION, fileName);
+
         try {
-            final String extendedFileName = String.format(FILE_NAME_EXTENSION, fileName);
+
             final URL resource = getClass().getClassLoader().getResource(extendedFileName);
             assert resource != null;
             final String filePath = Paths.get(resource.toURI()).toString();
-            return Files.readAllLines(Path.of(filePath));
+            lines = Files.readAllLines(Path.of(filePath));
         } catch (final URISyntaxException | IOException | NullPointerException exception) {
             //TODO: Implement custom error handling
             throw new RuntimeException("Error while reading the file: " + fileName, exception);
         }
+
+        if (lines.isEmpty()) {
+            throw new RuntimeException("File is empty: " + fileName);
+        }
+        return lines;
     }
 }

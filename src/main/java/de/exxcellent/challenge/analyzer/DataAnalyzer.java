@@ -20,11 +20,6 @@ public class DataAnalyzer<T extends DataRecord> {
      * @throws IllegalArgumentException if the list is null or empty
      */
     public List<T> findAllWithSmallestDiff(final List<T> records) {
-        if (records == null || records.isEmpty()) {
-            //TODO: Implement custom error handling
-            throw new IllegalArgumentException("No records provided.");
-        }
-
         final int minDiff = records.stream()
                 .mapToInt(DataRecord::getDiff)
                 .min()

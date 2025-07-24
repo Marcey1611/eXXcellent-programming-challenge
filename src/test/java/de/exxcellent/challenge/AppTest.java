@@ -23,9 +23,19 @@ class AppTest {
         assertEquals("successful", successLabel, "My expectations were not met");
     }
 
+    /**
+     * This (smoke) test runs the weather path of the application.
+     */
+    @Test
+    void runWeather() {
+        App.main("--weather", "weather.csv");
+    }
+
+    /**
+     * This (smoke) test runs the football path of the application.
+     */
     @Test
     void runFootball() {
         App.main("--football", "football.csv");
     }
-
 }

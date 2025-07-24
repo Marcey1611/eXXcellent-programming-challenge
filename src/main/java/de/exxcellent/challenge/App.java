@@ -18,33 +18,45 @@ import de.exxcellent.challenge.parser.WeatherDataParser;
  */
 public final class App {
 
-    private static final String WEATHER_FILE_NAME = "weather.csv";
-    private static final String FOOTBALL_FILE_NAME = "football.csv";
-
     /**
      * This is the main entry method of your program.
      * @param args The CLI arguments passed
      */
-    public static void main(String... args) {
+    public static void main(final String... args) {
 
-        // Your preparation code …
+        if (args.length != 2) {
+            System.out.println("Usage: --weather <weatherFile.csv> or --football <footballFile.csv>");
+            return;
+        }
 
-        final ApplicationRunner<WeatherDataRecord> weatherRunner = new ApplicationRunner<>(
-                new CsvReader(),
-                new WeatherDataParser(new ParserUtils(), new WeatherRecordFactory()),
-                new DataAnalyzer<>()
-        );
+        final String mode = args[0];
+        final String fileName = args[1];
 
-        final ApplicationRunner<FootballDataRecord> footballRunner = new ApplicationRunner<>(
-                new CsvReader(),
-                new FootballDataParser(new ParserUtils(), new FootballRecordFactory()),
-                new DataAnalyzer<>()
-        );
+        switch (mode) {
+            case "--weather" -> {
+                final ApplicationRunner<WeatherDataRecord> weatherRunner = new ApplicationRunner<>(
+                        new CsvReader(),
+                        new WeatherDataParser(new ParserUtils(), new WeatherRecordFactory()),
+                        new DataAnalyzer<>()
+                );
+                final String result = weatherRunner.run(fileName);
+                System.out.printf("Day with smallest temperature spread : %s%n", result);
+            }
 
-        final String dayWithSmallestTempSpread = weatherRunner.run(WEATHER_FILE_NAME);     // Your day analysis function call …
-        System.out.printf("Day with smallest temperature spread : %s%n", dayWithSmallestTempSpread);
+            case "--football" -> {
+                final ApplicationRunner<FootballDataRecord> footballRunner = new ApplicationRunner<>(
+                        new CsvReader(),
+                        new FootballDataParser(new ParserUtils(), new FootballRecordFactory()),
+                        new DataAnalyzer<>()
+                );
+                final String result = footballRunner.run(fileName);
+                System.out.printf("Team with smallest goal spread       : %s%n", result);
+            }
 
-        final String teamWithSmallestGoalSpread = footballRunner.run(FOOTBALL_FILE_NAME); // Your goal analysis function call …
-        System.out.printf("Team with smallest goal spread       : %s%n", teamWithSmallestGoalSpread);
+            default -> {
+                System.out.printf("Unknown mode: %s%n", mode);
+                System.out.println("Usage: --weather <weatherFile.csv> or --football <footballFile.csv>");
+            }
+        }
     }
 }
