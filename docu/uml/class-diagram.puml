@@ -14,19 +14,22 @@ interface DataRecordFactory<T extends DataRecord> {
 }
 
 class CsvReader {
-    + List<String> readFile(String path)
+    + List<String> readFile(String fileName)
 }
 
 class DataAnalyzer<T extends DataRecord> {
     + T findWithSmallestDiff(List<T> records)
 }
 
+class App {
+    + void main (String[] args)
+}
+
 class ApplicationRunner {
     - CsvReader csvReader
     - DataParser parser
     - DataAnalyzer analyzer
-    + void main (String[] args)
-    - void run(String filepath)
+    + void run(String fileName)
 }
 
 class WeatherDataRecord implements DataRecord {
@@ -78,5 +81,7 @@ FootballDataParser --> FootballRecordFactory
 ApplicationRunner --> CsvReader
 ApplicationRunner --> DataParser
 ApplicationRunner --> DataAnalyzer
+
+App --> ApplicationRunner
 
 @enduml

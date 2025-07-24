@@ -2,9 +2,6 @@ package de.exxcellent.challenge.io;
 
 import org.junit.jupiter.api.Test;
 
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Paths;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,17 +15,12 @@ class CsvReaderTest {
     /**
      * Tests the readFile method of the CsvReader class.
      * It checks if the method reads the correct number of lines and verifies the content of those lines.
-     *
-     * @throws URISyntaxException if the resource URL cannot be converted to a URI.
      */
     @Test
-    void testReadFile_returnsLinesFromTestFile() throws URISyntaxException {
-        final CsvReader reader = new CsvReader();
-        final URL resource = getClass().getClassLoader().getResource("weather-test.csv");
-        assertNotNull(resource);
+    void testReadFile_returnsLinesFromTestFile() {
+        CsvReader reader = new CsvReader();
 
-        final String filePath = Paths.get(resource.toURI()).toString();
-        final List<String> lines = reader.readFile(filePath);
+        final List<String> lines = reader.readFile("weather-test.csv");
 
         assertEquals(4, lines.size());
         assertTrue(lines.get(0).contains("Day,MxT,MnT"));
