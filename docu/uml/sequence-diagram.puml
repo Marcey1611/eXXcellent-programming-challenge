@@ -1,5 +1,6 @@
 @startuml
 actor User
+participant App
 participant ApplicationRunner
 participant CsvReader
 participant WeatherDataParser
@@ -7,7 +8,9 @@ participant WeatherRecordFactory
 participant WeatherDataRecord
 participant DataAnalyzer
 
-User -> ApplicationRunner: run("weather.csv")
+User -> App: starting
+
+App -> ApplicationRunner: run("weather.csv")
 
 ApplicationRunner -> CsvReader: readFile("weather.csv")
 CsvReader --> ApplicationRunner: List<String> lines
@@ -23,5 +26,7 @@ WeatherDataParser --> ApplicationRunner: List<WeatherDataRecord>
 ApplicationRunner -> DataAnalyzer: findWithSmallestDiff(records)
 DataAnalyzer --> ApplicationRunner: WeatherDataRecord
 
-ApplicationRunner -> User: print getLabel() of result
+ApplicationRunner --> App: getLabel()
+
+App -> User: print getLabel() of result
 @enduml
