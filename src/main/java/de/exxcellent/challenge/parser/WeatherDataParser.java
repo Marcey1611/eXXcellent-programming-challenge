@@ -15,7 +15,7 @@ import java.util.Map;
 public class WeatherDataParser implements DataParser<WeatherDataRecord> {
 
     private final ParserUtils parserUtils;
-    private final WeatherRecordFactory factory;
+    private final WeatherRecordFactory recordFactory;
 
     private static final String COLUMN_NAME_DAY = "Day";
     private static final String COLUMN_NAME_MAX = "MxT";
@@ -29,7 +29,7 @@ public class WeatherDataParser implements DataParser<WeatherDataRecord> {
      */
     public WeatherDataParser(final ParserUtils parserUtils, final WeatherRecordFactory factory) {
         this.parserUtils = parserUtils;
-        this.factory = factory;
+        this.recordFactory = factory;
     }
 
     /**
@@ -51,7 +51,7 @@ public class WeatherDataParser implements DataParser<WeatherDataRecord> {
             final String line = lines.get(i).trim();
             final String[] tokens = parserUtils.getTokens(line, columnIndexes);
             final String[] selectedTokens = parserUtils.selectToken(tokens, columnIndexes);
-            final WeatherDataRecord weatherDataRecord = factory.createFromTokens(selectedTokens);
+            final WeatherDataRecord weatherDataRecord = recordFactory.createFromTokens(selectedTokens);
             result.add(weatherDataRecord);
         }
         return result;

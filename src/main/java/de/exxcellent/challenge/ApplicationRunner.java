@@ -6,6 +6,7 @@ import de.exxcellent.challenge.model.DataRecord;
 import de.exxcellent.challenge.parser.DataParser;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * The ApplicationRunner class is responsible for orchestrating the reading, parsing, and analyzing of data records.
@@ -40,7 +41,9 @@ public class ApplicationRunner<T extends DataRecord> {
     public String run(final String fileName) {
         final List<String> lines = csvReader.readFile(fileName);
         final List<T> records = parser.parseLines(lines);
-        final T result = analyzer.findWithSmallestDiff(records);
-        return result.getLabel();
+        final List<T> smallestDiffRecords = analyzer.findAllWithSmallestDiff(records);
+        return smallestDiffRecords.stream()
+                .map(DataRecord::getLabel)
+                .collect(Collectors.joining(", "));
     }
 }

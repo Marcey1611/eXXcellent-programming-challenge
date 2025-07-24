@@ -2,8 +2,6 @@ package de.exxcellent.challenge.analyzer;
 
 import de.exxcellent.challenge.model.DataRecord;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -21,13 +19,19 @@ public class DataAnalyzer<T extends DataRecord> {
      * @return the record with the smallest difference
      * @throws IllegalArgumentException if the list is null or empty
      */
-    public T findWithSmallestDiff(final List<T> records) {
+    public List<T> findAllWithSmallestDiff(final List<T> records) {
         if (records == null || records.isEmpty()) {
             //TODO: Implement custom error handling
             throw new IllegalArgumentException("No records provided.");
         }
 
-        final Comparator<T> byDiff = Comparator.comparingInt(DataRecord::getDiff);
-        return Collections.min(records, byDiff);
+        final int minDiff = records.stream()
+                .mapToInt(DataRecord::getDiff)
+                .min()
+                .orElseThrow();
+
+        return records.stream()
+                .filter(r -> r.getDiff() == minDiff)
+                .toList();
     }
 }

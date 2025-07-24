@@ -7,60 +7,60 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for the DataAnalyzer class.
- * This class tests the functionality of finding the record with the smallest difference.
+ * This class tests the functionality of finding the records with the smallest difference.
  */
 public class DataAnalyzerTest {
 
     private DataAnalyzer<DataRecord> analyzer;
 
-    /**
-     * Sets up the DataAnalyzer instance before each test.
-     */
     @BeforeEach
     void setUp() {
         this.analyzer = new DataAnalyzer<>();
     }
 
-    /**
-     * Tests the findWithSmallestDiff method with a list of DataRecord objects.
-     * It verifies that the method correctly identifies the record with the smallest difference.
-     */
     @Test
-    void testFindWithSmallestDiff_returnsCorrectRecord() {
-        final List<DataRecord> records = List.of(
+    void testFindAllWithSmallestDiff_returnsSingleRecord() {
+        List<DataRecord> records = List.of(
                 new DummyRecord("A", 10),
                 new DummyRecord("B", 5),
                 new DummyRecord("C", 8)
         );
 
-        final DataRecord result = this.analyzer.findWithSmallestDiff(records);
+        List<DataRecord> result = analyzer.findAllWithSmallestDiff(records);
 
-        assertEquals("B", result.getLabel());
-        assertEquals(5, result.getDiff());
+        assertEquals(1, result.size());
+        assertEquals("B", result.get(0).getLabel());
+        assertEquals(5, result.get(0).getDiff());
     }
 
-    /**
-     * Tests the findWithSmallestDiff method with a list containing no records.
-     * It verifies that the method throws an IllegalArgumentException when the list is empty.
-     */
     @Test
-    void testFindWithSmallestDiff_throwsExceptionWhenEmpty() {
-        assertThrows(IllegalArgumentException.class,
-                () -> this.analyzer.findWithSmallestDiff(List.of()));
+    void testFindAllWithSmallestDiff_returnsMultipleRecords() {
+        List<DataRecord> records = List.of(
+                new DummyRecord("A", 5),
+                new DummyRecord("B", 5),
+                new DummyRecord("C", 8)
+        );
+
+        List<DataRecord> result = analyzer.findAllWithSmallestDiff(records);
+
+        assertEquals(2, result.size());
+        assertTrue(result.stream().anyMatch(r -> r.getLabel().equals("A")));
+        assertTrue(result.stream().anyMatch(r -> r.getLabel().equals("B")));
     }
 
-    /**
-     * Tests the findWithSmallestDiff method with a null list.
-     * It verifies that the method throws an IllegalArgumentException when the input is null.
-     */
     @Test
-    void testFindWithSmallestDiff_throwsExceptionWhenNull() {
+    void testFindAllWithSmallestDiff_throwsExceptionWhenEmpty() {
         assertThrows(IllegalArgumentException.class,
-                () -> this.analyzer.findWithSmallestDiff(null));
+                () -> analyzer.findAllWithSmallestDiff(List.of()));
+    }
+
+    @Test
+    void testFindAllWithSmallestDiff_throwsExceptionWhenNull() {
+        assertThrows(IllegalArgumentException.class,
+                () -> analyzer.findAllWithSmallestDiff(null));
     }
 }
