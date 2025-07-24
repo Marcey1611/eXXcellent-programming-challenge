@@ -9,6 +9,8 @@ import de.exxcellent.challenge.model.WeatherDataRecord;
 import de.exxcellent.challenge.parser.FootballDataParser;
 import de.exxcellent.challenge.parser.ParserUtils;
 import de.exxcellent.challenge.parser.WeatherDataParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The entry class for your solution. This class is only aimed as starting point and not intended as baseline for your software
@@ -17,6 +19,8 @@ import de.exxcellent.challenge.parser.WeatherDataParser;
  * @author Benjamin Schmid <benjamin.schmid@exxcellent.de>
  */
 public final class App {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
 
     /**
      * This is the main entry method of your program.
@@ -32,6 +36,9 @@ public final class App {
         final String mode = args[0];
         final String fileName = args[1];
 
+        LOGGER.info("Application started with mode '{}'.", mode);
+        LOGGER.info("Starting process for file '{}'.", fileName);
+
         switch (mode) {
             case "--weather" -> {
                 final ApplicationRunner<WeatherDataRecord> weatherRunner = new ApplicationRunner<>(
@@ -40,6 +47,7 @@ public final class App {
                         new DataAnalyzer<>()
                 );
                 final String result = weatherRunner.run(fileName);
+                LOGGER.info("Weather analysis result: {}", result);
                 System.out.printf("Day with smallest temperature spread : %s%n", result);
             }
 
@@ -50,11 +58,13 @@ public final class App {
                         new DataAnalyzer<>()
                 );
                 final String result = footballRunner.run(fileName);
+                LOGGER.info("Football analysis result: {}.", result);
                 System.out.printf("Team with smallest goal spread       : %s%n", result);
             }
 
             default -> {
-                System.out.printf("Unknown mode: %s%n", mode);
+                LOGGER.error("Unknown mode received: '{}'.", mode);
+                System.out.println("Unknown mode!");
                 System.out.println("Usage: --weather <weatherFile.csv> or --football <footballFile.csv>");
             }
         }
