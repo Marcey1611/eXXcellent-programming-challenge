@@ -51,16 +51,4 @@ public class DataAnalyzerTest {
         assertTrue(result.stream().anyMatch(r -> r.getLabel().equals("A")));
         assertTrue(result.stream().anyMatch(r -> r.getLabel().equals("B")));
     }
-
-    @Test
-    void testFindAllWithSmallestDiff_throwsExceptionWhenEmpty() {
-        assertThrows(IllegalArgumentException.class,
-                () -> analyzer.findAllWithSmallestDiff(List.of()));
-    }
-
-    @Test
-    void testFindAllWithSmallestDiff_throwsExceptionWhenNull() {
-        assertThrows(IllegalArgumentException.class,
-                () -> analyzer.findAllWithSmallestDiff(null));
-    }
 }

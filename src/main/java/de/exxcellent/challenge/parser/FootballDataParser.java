@@ -2,12 +2,16 @@ package de.exxcellent.challenge.parser;
 
 import de.exxcellent.challenge.factory.FootballRecordFactory;
 import de.exxcellent.challenge.model.FootballDataRecord;
-import de.exxcellent.challenge.model.WeatherDataRecord;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * FootballDataParser is responsible for parsing football data records from a list of strings.
+ * It extracts relevant information such as team name, goals, and goals allowed
+ * from the input lines and creates FootballDataRecord objects.
+ */
 public class FootballDataParser implements DataParser<FootballDataRecord> {
 
     private final ParserUtils parserUtils;
@@ -17,11 +21,24 @@ public class FootballDataParser implements DataParser<FootballDataRecord> {
     private static final String COLUMN_NAME_GOALS = "Goals";
     private static final String COLUMN_NAME_GOALS_ALLOWED = "Goals Allowed";
 
+    /**
+     * Constructs a WeatherDataParser with the specified ParserUtils and WeatherRecordFactory.
+     *
+     * @param parserUtils the utility class for parsing operations.
+     * @param recordFactory the factory to create FootballDataRecord instances.
+     */
     public FootballDataParser(ParserUtils parserUtils, FootballRecordFactory recordFactory) {
         this.parserUtils = parserUtils;
         this.recordFactory = recordFactory;
     }
 
+    /**
+     * Parses a list of strings representing football data records.
+     * The first line is expected to contain headers, and subsequent lines contain the actual data per team.
+     *
+     * @param lines the list of strings to parse.
+     * @return a list of FootballDataRecord objects created from the parsed data.
+     */
     @Override
     public List<FootballDataRecord> parseLines(final List<String> lines) {
         final List<FootballDataRecord> result = new ArrayList<>();

@@ -1,5 +1,6 @@
 package de.exxcellent.challenge.factory;
 
+import de.exxcellent.challenge.errorhandling.DataParseException;
 import de.exxcellent.challenge.model.WeatherDataRecord;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +34,7 @@ class WeatherRecordFactoryTest {
     void createFromTokens_nonNumericMax_shouldThrowException() {
         final String[] tokens = {"12", "eighty", "59"};
 
-        assertThrows(RuntimeException.class, () -> factory.createFromTokens(tokens));
+        assertThrows(DataParseException.class, () -> factory.createFromTokens(tokens));
     }
 
     /**
@@ -43,7 +44,7 @@ class WeatherRecordFactoryTest {
     void createFromTokens_tooFewTokens_shouldThrowException() {
         final String[] tokens = {"12", "88"};
 
-        assertThrows(RuntimeException.class, () -> factory.createFromTokens(tokens));
+        assertThrows(DataParseException.class, () -> factory.createFromTokens(tokens));
     }
 
     /**
@@ -51,6 +52,6 @@ class WeatherRecordFactoryTest {
      */
     @Test
     void createFromTokens_nullTokens_shouldThrowException() {
-        assertThrows(NullPointerException.class, () -> factory.createFromTokens(null));
+        assertThrows(DataParseException.class, () -> factory.createFromTokens(null));
     }
 }

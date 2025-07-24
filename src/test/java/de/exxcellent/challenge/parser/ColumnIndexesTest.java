@@ -1,5 +1,6 @@
 package de.exxcellent.challenge.parser;
 
+import de.exxcellent.challenge.errorhandling.InvalidHeaderException;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -30,6 +31,6 @@ class ColumnIndexesTest {
     @Test
     void testFrom_missingKey_throwsException() {
         final Map<String, Integer> map = Map.of("Day", 0, "MxT", 1);
-        assertThrows(IllegalArgumentException.class, () -> ColumnIndexes.from(map, "Day", "MxT", "MnT"));
+        assertThrows(InvalidHeaderException.class, () -> ColumnIndexes.from(map, "Day", "MxT", "MnT"));
     }
 }
