@@ -1,0 +1,15 @@
+@startuml
+[App] --> [Core]
+[Core] --> [Parser]
+[Core] --> [Factory]
+[Core] --> [IO]
+[Core] --> [Analyzer]
+[Parser] --> [Factory]
+[Parser] --> [Model]
+[Factory] --> [Model]
+[Analyzer] --> [Model]
+[Core] --> [Model]
+[Core] --> [ErrorHandling]
+[Parser] --> [ErrorHandling]
+[IO] --> [ErrorHandling]
+@enduml
