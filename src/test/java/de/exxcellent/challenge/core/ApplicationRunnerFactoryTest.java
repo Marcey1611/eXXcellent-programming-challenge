@@ -1,7 +1,5 @@
 package de.exxcellent.challenge.core;
 
-import de.exxcellent.challenge.analyzer.ApplicationRunner;
-import de.exxcellent.challenge.analyzer.ApplicationRunnerFactory;
 import de.exxcellent.challenge.model.DataRecord;
 import org.junit.jupiter.api.Test;
 

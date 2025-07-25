@@ -1,7 +1,7 @@
 package de.exxcellent.challenge;
 
-import de.exxcellent.challenge.analyzer.ApplicationRunner;
-import de.exxcellent.challenge.analyzer.ApplicationRunnerFactory;
+import de.exxcellent.challenge.core.ApplicationRunner;
+import de.exxcellent.challenge.core.ApplicationRunnerFactory;
 import de.exxcellent.challenge.model.DataRecord;
 import de.exxcellent.challenge.core.ArgsValidator;
 import org.slf4j.Logger;
