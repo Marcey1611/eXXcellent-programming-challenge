@@ -19,7 +19,6 @@ class ApplicationRunnerFactoryTest {
         final ApplicationRunner<? extends DataRecord> runner = ApplicationRunnerFactory.createRunner("--weather");
 
         assertNotNull(runner);
-        assertTrue(runner instanceof ApplicationRunner);
     }
 
     /**
@@ -30,7 +29,6 @@ class ApplicationRunnerFactoryTest {
         final ApplicationRunner<? extends DataRecord> runner = ApplicationRunnerFactory.createRunner("--football");
 
         assertNotNull(runner);
-        assertTrue(runner instanceof ApplicationRunner);
     }
 
     /**
