@@ -76,9 +76,7 @@ class ParserUtilsTest {
      */
     @Test
     void testGetTokens_tooShortLine_throwsException() {
-        assertThrows(InvalidLineFormatException.class, () -> {
-            parserUtils.getTokens("1,88", new ColumnIndexes(0, 1, 2));
-        });
+        assertThrows(InvalidLineFormatException.class, () -> parserUtils.getTokens("1,88", new ColumnIndexes(0, 1, 2)));
     }
 
     /**
