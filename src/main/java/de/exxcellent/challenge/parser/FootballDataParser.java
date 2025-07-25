@@ -14,12 +14,12 @@ import java.util.Map;
  */
 public class FootballDataParser implements DataParser<FootballDataRecord> {
 
-    private final ParserUtils parserUtils;
-    private final FootballRecordFactory recordFactory;
-
     private static final String COLUMN_NAME_TEAM = "Team";
     private static final String COLUMN_NAME_GOALS = "Goals";
     private static final String COLUMN_NAME_GOALS_ALLOWED = "Goals Allowed";
+
+    private final ParserUtils parserUtils;
+    private final FootballRecordFactory recordFactory;
 
     /**
      * Constructs a WeatherDataParser with the specified ParserUtils and WeatherRecordFactory.

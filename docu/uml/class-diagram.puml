@@ -1,87 +1,191 @@
 @startuml
 
-interface DataRecord {
-    + String getLabel()
-    + int getDiff()
-}
-
-interface DataParser<T extends DataRecord> {
-    + List<T> parseLines(List<String> lines)
-}
-
-interface DataRecordFactory<T extends DataRecord> {
-    + T createFromTokens(String[] tokens)
-}
-
-class CsvReader {
-    + List<String> readFile(String fileName)
-}
-
-class DataAnalyzer<T extends DataRecord> {
-    + T findWithSmallestDiff(List<T> records)
-}
-
 class App {
-    + void main (String[] args)
+    - static Logger LOGGER
+    + static void main (String[] args)
 }
 
-class ApplicationRunner {
-    - CsvReader csvReader
-    - DataParser parser
-    - DataAnalyzer analyzer
-    + void run(String fileName)
+package core {
+    class ArgsValidator {
+        - static Logger LOGGER
+        - static List<String> VALID_MODES
+        - static List<String> VALID_FILES
+        + static void validateArgs(String[] args)
+        - static void checkNullAndLength(String[] args)
+        - static void checkMode(String mode)
+        - static void checkFileName(String fileName)
+    }
+
+    class ApplicationRunnerFactory {
+        + static ApplicationRunner<? extends DataRecord> createRunner(String mode)
+    }
+
+    class ApplicationRunner {
+        - static Logger LOGGER
+        - CsvReader csvReader
+        - DataParser parser
+        - DataAnalyzer analyzer
+        + String run(String fileName)
+    }
 }
 
-class WeatherDataRecord implements DataRecord {
-    - String day
-    - int maxTemp
-    - int minTemp
-    + String getLabel()
-    + int getDiff()
+package io {
+    class CsvReader {
+        - static Logger LOGGER
+        - static String FILE_NAME_EXTENSION
+        + List<String> readFile(String fileName)
+    }
 }
 
-class WeatherDataParser implements DataParser<WeatherDataRecord> {
-    - DataRecordFactory<WeatherDataRecord> factory
-    + List<WeatherDataRecord> parseLines(List<String> lines)
+package parser {
+    interface DataParser<T extends DataRecord> {
+        + List<T> parseLines(List<String> lines)
+    }
+
+    class WeatherDataParser {
+        - static String COLUMN_NAME_DAY
+        - static String COLUMN_NAME_MAX
+        - static String COLUMN_NAME_MIN
+        - ParserUtils parserUtils
+        - WeatherRecordFactory recordFactory
+        +List<WeatherDataRecord> parseLines(List<String> lines)
+    }
+
+    class FootballDataParser {
+        - static String COLUMN_NAME_TEAM
+        - static String COLUMN_NAME_GOALS
+        - static String COLUMN_NAME_GOALS_ALLOWED
+        - ParserUtils parserUtils
+        - DataRecordFactory<FootballDataRecord> factory
+        + List<FootballDataRecord> parseLines(List<String> lines)
+    }
+
+    class ParserUtils {
+        -static Logger LOGGER
+        Map<String, Integer> getHeaders(String firstLine)
+        String[] getTokens(String line, ColumnIndexes columnIndexes)
+        String[] selectToken(String[] tokens, ColumnIndexes columnIndexes)
+    }
+
+    record ColumnIndexes {
+        -static Logger LOGGER
+        +int label
+        +int base
+        +int substrate
+        +static ColumnIndexes from(Map<String, Integer> map, String label, String base, String substrate)
+    }
 }
 
-class FootballDataRecord implements DataRecord {
-    - String teamName
-    - int goals
-    - int goalsAllowed
-    + String getLabel()
-    + int getDiff()
+package factory {
+    interface DataRecordFactory<T extends DataRecord> {
+        + T createFromTokens(String[] tokens)
+    }
+
+    class WeatherRecordFactory {
+        - static Logger LOGGER
+        + WeatherDataRecord createFromTokens(String[] tokens)
+    }
+
+    class FootballRecordFactory {
+        - static Logger LOGGER
+        + FootballDataRecord createFromTokens(String[] tokens)
+    }
 }
 
-class FootballDataParser implements DataParser<FootballDataRecord> {
-    - DataRecordFactory<FootballDataRecord> factory
-    + List<FootballDataRecord> parseLines(List<String> lines)
+package model {
+    interface DataRecord {
+        + String getLabel()
+        + int getDiff()
+    }
+
+    class WeatherDataRecord {
+        - static Logger LOGGER
+        - String day
+        - int maxTemp
+        - int minTemp
+        + String getLabel()
+        + int getDiff()
+    }
+
+    class FootballDataRecord {
+        - static Logger LOGGER
+        - String teamName
+        - int goals
+        - int goalsAllowed
+        + String getLabel()
+        + int getDiff()
+    }
 }
 
-class WeatherRecordFactory implements DataRecordFactory<WeatherDataRecord> {
-    + WeatherDataRecord createFromTokens(String[] tokens)
+package analyzer {
+    class DataAnalyzer<T extends DataRecord> {
+        + T findWithSmallestDiff(List<T> records)
+    }
 }
 
-class FootballRecordFactory implements DataRecordFactory<FootballDataRecord> {
-    + FootballDataRecord createFromTokens(String[] tokens)
+package errorhandling {
+    exception DataParseException {
+        +DataParseException(String message)
+    }
+
+    exception FileReadException {
+        +FileReadException(String message)
+    }
+
+    exception InvalidDataRecordException {
+        +InvalidDataRecordException(String message)
+    }
+
+    exception InvalidHeaderException {
+      +InvalidHeaderException(String message)
+    }
+
+    exception InvalidLineFormatException {
+        +InvalidLineFormatException(String message)
+    }
+
+    exception ValidationException {
+        +ValidationException(String message)
+    }
 }
 
-DataRecord <|.. WeatherDataRecord
-DataRecord <|.. FootballDataRecord
+App --> ArgsValidator : uses
+App --> ApplicationRunnerFactory : uses
+App --> ApplicationRunner : uses
 
-DataParser <|.. WeatherDataParser
-DataParser <|.. FootballDataParser
+ApplicationRunnerFactory --> ApplicationRunner : creates
 
-DataRecordFactory <|.. WeatherRecordFactory
-DataRecordFactory <|.. FootballRecordFactory
+ApplicationRunner --> CsvReader : uses
+ApplicationRunner --> DataParser : uses
+ApplicationRunner --> DataAnalyzer : uses
 
-WeatherDataParser --> WeatherRecordFactory
-FootballDataParser --> FootballRecordFactory
+DataParser <|.. WeatherDataParser : implements
+DataParser <|.. FootballDataParser : implements
 
-ApplicationRunner --> CsvReader
-ApplicationRunner --> DataParser
-ApplicationRunner --> DataAnalyzer
+WeatherDataParser --> ParserUtils : uses
+WeatherDataParser --> ColumnIndexes : uses
+WeatherDataParser --> DataRecordFactory : uses
 
-App --> ApplicationRunner
+FootballDataParser --> ParserUtils : uses
+FootballDataParser --> ColumnIndexes : uses
+FootballDataParser --> DataRecordFactory : uses
+
+ParserUtils --> ColumnIndexes : uses
+
+DataRecordFactory <|.. WeatherRecordFactory : implements
+DataRecordFactory <|.. FootballRecordFactory : implements
+
+WeatherRecordFactory --> DataRecord : creates
+FootballRecordFactory --> DataRecord : creates
+
+DataRecord <|.. WeatherDataRecord : implements
+DataRecord <|.. FootballDataRecord : implements
+
+DataAnalyzer --> DataRecord : uses
+
+
+
+
+
 
 @enduml

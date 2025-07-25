@@ -1,14 +1,9 @@
 package de.exxcellent.challenge;
 
-import de.exxcellent.challenge.analyzer.DataAnalyzer;
-import de.exxcellent.challenge.factory.FootballRecordFactory;
-import de.exxcellent.challenge.factory.WeatherRecordFactory;
-import de.exxcellent.challenge.io.CsvReader;
-import de.exxcellent.challenge.model.FootballDataRecord;
-import de.exxcellent.challenge.model.WeatherDataRecord;
-import de.exxcellent.challenge.parser.FootballDataParser;
-import de.exxcellent.challenge.parser.ParserUtils;
-import de.exxcellent.challenge.parser.WeatherDataParser;
+import de.exxcellent.challenge.analyzer.ApplicationRunner;
+import de.exxcellent.challenge.analyzer.ApplicationRunnerFactory;
+import de.exxcellent.challenge.model.DataRecord;
+import de.exxcellent.challenge.core.ArgsValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,45 +23,29 @@ public final class App {
      */
     public static void main(final String... args) {
 
-        if (args.length != 2) {
-            System.out.println("Usage: --weather <weatherFile.csv> or --football <footballFile.csv>");
-            return;
-        }
+        ArgsValidator.validate(args);
 
         final String mode = args[0];
         final String fileName = args[1];
 
         LOGGER.info("Application started with mode '{}'.", mode);
-        LOGGER.info("Starting process for file '{}'.", fileName);
 
-        switch (mode) {
-            case "--weather" -> {
-                final ApplicationRunner<WeatherDataRecord> weatherRunner = new ApplicationRunner<>(
-                        new CsvReader(),
-                        new WeatherDataParser(new ParserUtils(), new WeatherRecordFactory()),
-                        new DataAnalyzer<>()
-                );
-                final String result = weatherRunner.run(fileName);
+        try {
+            final ApplicationRunner<? extends DataRecord> runner = ApplicationRunnerFactory.createRunner(mode);
+            LOGGER.info("Starting process for file '{}'.", fileName);
+            final String result = runner.run(fileName);
+
+            if ("--weather".equals(mode)) {
                 LOGGER.info("Weather analysis result: {}", result);
                 System.out.printf("Day with smallest temperature spread : %s%n", result);
-            }
-
-            case "--football" -> {
-                final ApplicationRunner<FootballDataRecord> footballRunner = new ApplicationRunner<>(
-                        new CsvReader(),
-                        new FootballDataParser(new ParserUtils(), new FootballRecordFactory()),
-                        new DataAnalyzer<>()
-                );
-                final String result = footballRunner.run(fileName);
-                LOGGER.info("Football analysis result: {}.", result);
+            } else {
+                LOGGER.info("Football analysis result: {}", result);
                 System.out.printf("Team with smallest goal spread       : %s%n", result);
             }
 
-            default -> {
-                LOGGER.error("Unknown mode received: '{}'.", mode);
-                System.out.println("Unknown mode!");
-                System.out.println("Usage: --weather <weatherFile.csv> or --football <footballFile.csv>");
-            }
+        } catch (IllegalArgumentException e) {
+            LOGGER.error("Unknown mode received: '{}'", mode);
+            System.out.println("Unknown mode!");
         }
     }
 }

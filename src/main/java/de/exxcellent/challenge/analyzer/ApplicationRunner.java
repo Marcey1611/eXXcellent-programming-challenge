@@ -1,6 +1,5 @@
-package de.exxcellent.challenge;
+package de.exxcellent.challenge.analyzer;
 
-import de.exxcellent.challenge.analyzer.DataAnalyzer;
 import de.exxcellent.challenge.io.CsvReader;
 import de.exxcellent.challenge.model.DataRecord;
 import de.exxcellent.challenge.parser.DataParser;
