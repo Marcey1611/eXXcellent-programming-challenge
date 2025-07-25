@@ -49,3 +49,8 @@ public final class App {
         }
     }
 }
+
+/* Future improvements:
+ * - Add more detailed error handling and logging.
+ * - Consider using a dependency injection framework for better testability and maintainability. (z.b. Spring)
+ */
