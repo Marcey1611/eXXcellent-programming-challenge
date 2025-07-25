@@ -1,0 +1,56 @@
+@startuml
+actor User
+participant App
+participant ArgsValidator
+participant ApplicationRunnerFactory
+participant ApplicationRunner
+participant CsvReader
+participant DataParser
+participant ParserUtils
+participant ColumnIndexes
+participant WeatherRecordFactory
+participant WeatherDataRecord
+participant DataAnalyzer
+
+User -> App: start
+
+App -> ArgsValidator: validateArgs(args)
+
+App -> ApplicationRunnerFactory: createRunner("--weather")
+ApplicationRunnerFactory --> App: ApplicationRunner
+
+App -> ApplicationRunner: run("weather.csv")
+
+ApplicationRunner -> CsvReader: readFile("weather.csv")
+CsvReader --> ApplicationRunner: List<String> lines
+
+ApplicationRunner -> DataParser: parseLines(lines)
+
+activate DataParser
+DataParser -> ParserUtils: getHeaders(lines[0])
+ParserUtils --> DataParser: Map<String, Integer> columnMap
+
+DataParser -> ColumnIndexes: from(columnMap, "Day", "MxT", "MnT")
+ColumnIndexes --> DataParser: ColumnIndexes
+
+loop for each data line
+    DataParser -> ParserUtils: getTokens(line, columnIndexes)
+    ParserUtils --> DataParser: String[] tokens
+
+    DataParser -> ParserUtils: selectToken(tokens, columnIndexes)
+    ParserUtils --> DataParser: String[] selectedTokens
+
+    DataParser -> WeatherRecordFactory: createFromTokens(selectedTokens)
+    WeatherRecordFactory --> DataParser: WeatherDataRecord
+end
+
+DataParser --> ApplicationRunner: List<WeatherDataRecord>
+deactivate DataParser
+
+ApplicationRunner -> DataAnalyzer: findWithSmallestDiff(records)
+DataAnalyzer --> ApplicationRunner: WeatherDataRecord
+
+ApplicationRunner --> App: getLabel()
+
+App -> User: print getLabel() of result
+@enduml

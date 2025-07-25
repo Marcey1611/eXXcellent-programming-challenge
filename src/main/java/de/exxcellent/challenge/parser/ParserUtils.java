@@ -1,5 +1,9 @@
 package de.exxcellent.challenge.parser;
 
+import de.exxcellent.challenge.errorhandling.InvalidLineFormatException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +13,8 @@ import java.util.Map;
  * Provides methods to extract headers, tokens, and select specific tokens based on column indexes.
  */
 public class ParserUtils {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ParserUtils.class);
 
     /**
      * Extracts headers from the first line of a CSV-like string.
@@ -34,9 +40,14 @@ public class ParserUtils {
      */
     protected String[] getTokens(final String line, final ColumnIndexes columnIndexes) {
         final String[] tokens = line.split(",");
-        if (tokens.length <= Math.max(columnIndexes.label(), Math.max(columnIndexes.base(), columnIndexes.substrate()))) {
-            //TODO: Implement custom error handling
-            throw new IllegalArgumentException("Line is too short: " + line);
+        final int maxRequiredIndex = Math.max(
+                columnIndexes.label(),
+                Math.max(columnIndexes.base(), columnIndexes.substrate())
+        );
+
+        if (tokens.length <= maxRequiredIndex) {
+            LOGGER.error("CSV line '{}' is too short. Expected at least {} columns, but got {}", line, maxRequiredIndex + 1, tokens.length);
+            throw new InvalidLineFormatException("Line of provided file does not contain enough columns.");
         }
         return tokens;
     }
@@ -56,8 +67,8 @@ public class ParserUtils {
                     tokens[columnIndexes.substrate()],
             };
         } catch (final Exception exception) {
-            //TODO: Implement custom error handling
-            throw new IllegalArgumentException("Error creating data record from tokens: " + List.of(tokens), exception);
+            LOGGER.error("Failed to select tokens at indexes {} from line: {}", columnIndexes, List.of(tokens), exception);
+            throw new InvalidLineFormatException("Error extracting selected tokens from a line.");
         }
     }
 }

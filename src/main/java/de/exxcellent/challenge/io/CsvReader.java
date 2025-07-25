@@ -1,5 +1,9 @@
 package de.exxcellent.challenge.io;
 
+import de.exxcellent.challenge.errorhandling.FileReadException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -14,6 +18,7 @@ import java.util.List;
  */
 public class CsvReader {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CsvReader.class);
     private static final String FILE_NAME_EXTENSION = "de/exxcellent/challenge/%s";
 
     /**
@@ -24,15 +29,29 @@ public class CsvReader {
      * @throws RuntimeException if there is an error reading the file.
      */
     public List<String> readFile(final String fileName) {
+        final String extendedFileName = String.format(FILE_NAME_EXTENSION, fileName);
+
         try {
-            final String extendedFileName = String.format(FILE_NAME_EXTENSION, fileName);
             final URL resource = getClass().getClassLoader().getResource(extendedFileName);
-            assert resource != null;
-            final String filePath = Paths.get(resource.toURI()).toString();
-            return Files.readAllLines(Path.of(filePath));
-        } catch (final URISyntaxException | IOException | NullPointerException exception) {
-            //TODO: Implement custom error handling
-            throw new RuntimeException("Error while reading the file: " + fileName, exception);
+
+            if (resource == null) {
+                LOGGER.error("Resource not found for file: {}", extendedFileName);
+                throw new FileReadException("File not found.");
+            }
+
+            final Path filePath = Paths.get(resource.toURI());
+            final List<String> lines = Files.readAllLines(filePath);
+
+            if (lines.isEmpty()) {
+                LOGGER.error("File is empty: {}", fileName);
+                throw new FileReadException("Provided file is empty.");
+            }
+
+            return lines;
+
+        } catch (URISyntaxException | IOException e) {
+            LOGGER.error("Error while reading file: {}", fileName, e);
+            throw new FileReadException("Could not read provided file.");
         }
     }
 }

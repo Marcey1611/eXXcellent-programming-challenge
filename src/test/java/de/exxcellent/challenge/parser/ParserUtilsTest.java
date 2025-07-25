@@ -1,5 +1,6 @@
 package de.exxcellent.challenge.parser;
 
+import de.exxcellent.challenge.errorhandling.InvalidLineFormatException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -75,9 +76,7 @@ class ParserUtilsTest {
      */
     @Test
     void testGetTokens_tooShortLine_throwsException() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            parserUtils.getTokens("1,88", new ColumnIndexes(0, 1, 2));
-        });
+        assertThrows(InvalidLineFormatException.class, () -> parserUtils.getTokens("1,88", new ColumnIndexes(0, 1, 2)));
     }
 
     /**
@@ -101,7 +100,7 @@ class ParserUtilsTest {
         final String[] tokens = {"1", "88", "59"};
         final ColumnIndexes indexes = new ColumnIndexes(0, 1, 3);
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(InvalidLineFormatException.class,
                 () -> parserUtils.selectToken(tokens, indexes));
     }
 }

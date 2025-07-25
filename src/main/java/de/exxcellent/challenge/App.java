@@ -1,14 +1,11 @@
 package de.exxcellent.challenge;
 
-import de.exxcellent.challenge.analyzer.DataAnalyzer;
-import de.exxcellent.challenge.factory.FootballRecordFactory;
-import de.exxcellent.challenge.factory.WeatherRecordFactory;
-import de.exxcellent.challenge.io.CsvReader;
-import de.exxcellent.challenge.model.FootballDataRecord;
-import de.exxcellent.challenge.model.WeatherDataRecord;
-import de.exxcellent.challenge.parser.FootballDataParser;
-import de.exxcellent.challenge.parser.ParserUtils;
-import de.exxcellent.challenge.parser.WeatherDataParser;
+import de.exxcellent.challenge.core.ApplicationRunner;
+import de.exxcellent.challenge.core.ApplicationRunnerFactory;
+import de.exxcellent.challenge.model.DataRecord;
+import de.exxcellent.challenge.core.ArgsValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The entry class for your solution. This class is only aimed as starting point and not intended as baseline for your software
@@ -18,33 +15,42 @@ import de.exxcellent.challenge.parser.WeatherDataParser;
  */
 public final class App {
 
-    private static final String WEATHER_FILE_NAME = "weather.csv";
-    private static final String FOOTBALL_FILE_NAME = "football.csv";
+    private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
 
     /**
      * This is the main entry method of your program.
      * @param args The CLI arguments passed
      */
-    public static void main(String... args) {
+    public static void main(final String... args) {
 
-        // Your preparation code …
+        ArgsValidator.validate(args);
 
-        final ApplicationRunner<WeatherDataRecord> weatherRunner = new ApplicationRunner<>(
-                new CsvReader(),
-                new WeatherDataParser(new ParserUtils(), new WeatherRecordFactory()),
-                new DataAnalyzer<>()
-        );
+        final String mode = args[0];
+        final String fileName = args[1];
 
-        final ApplicationRunner<FootballDataRecord> footballRunner = new ApplicationRunner<>(
-                new CsvReader(),
-                new FootballDataParser(new ParserUtils(), new FootballRecordFactory()),
-                new DataAnalyzer<>()
-        );
+        LOGGER.info("Application started with mode '{}'.", mode);
 
-        final String dayWithSmallestTempSpread = weatherRunner.run(WEATHER_FILE_NAME);     // Your day analysis function call …
-        System.out.printf("Day with smallest temperature spread : %s%n", dayWithSmallestTempSpread);
+        try {
+            final ApplicationRunner<? extends DataRecord> runner = ApplicationRunnerFactory.createRunner(mode);
+            LOGGER.info("Starting process for file '{}'.", fileName);
+            final String result = runner.run(fileName);
 
-        final String teamWithSmallestGoalSpread = footballRunner.run(FOOTBALL_FILE_NAME); // Your goal analysis function call …
-        System.out.printf("Team with smallest goal spread       : %s%n", teamWithSmallestGoalSpread);
+            if ("--weather".equals(mode)) {
+                LOGGER.info("Weather analysis result: {}", result);
+                System.out.printf("Day with smallest temperature spread : %s%n", result);
+            } else {
+                LOGGER.info("Football analysis result: {}", result);
+                System.out.printf("Team with smallest goal spread       : %s%n", result);
+            }
+
+        } catch (IllegalArgumentException e) {
+            LOGGER.error("Unknown mode received: '{}'", mode);
+            System.out.println("Unknown mode!");
+        }
     }
 }
+
+/* Future improvements:
+ * - Add more detailed error handling and logging.
+ * - Consider using a dependency injection framework for better testability and maintainability. (z.b. Spring)
+ */

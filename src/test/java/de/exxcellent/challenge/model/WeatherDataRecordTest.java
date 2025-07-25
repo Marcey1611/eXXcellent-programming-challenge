@@ -1,5 +1,6 @@
 package de.exxcellent.challenge.model;
 
+import de.exxcellent.challenge.errorhandling.InvalidDataRecordException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -51,7 +52,7 @@ class WeatherDataRecordTest {
      */
     @Test
     void testConstructor_throwsException() {
-        assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(InvalidDataRecordException.class, () ->
                 new WeatherDataRecord("1", 10, 20));
     }
 }

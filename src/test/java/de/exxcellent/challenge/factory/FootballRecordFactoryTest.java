@@ -1,5 +1,6 @@
 package de.exxcellent.challenge.factory;
 
+import de.exxcellent.challenge.errorhandling.DataParseException;
 import de.exxcellent.challenge.model.FootballDataRecord;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +35,7 @@ public class FootballRecordFactoryTest {
     void createFromTokens_nonNumericMax_shouldThrowException() {
         final String[] tokens = {"12", "eighty", "59"};
 
-        assertThrows(RuntimeException.class, () -> factory.createFromTokens(tokens));
+        assertThrows(DataParseException.class, () -> factory.createFromTokens(tokens));
     }
 
     /**
@@ -44,7 +45,7 @@ public class FootballRecordFactoryTest {
     void createFromTokens_tooFewTokens_shouldThrowException() {
         final String[] tokens = {"12", "88"};
 
-        assertThrows(RuntimeException.class, () -> factory.createFromTokens(tokens));
+        assertThrows(DataParseException.class, () -> factory.createFromTokens(tokens));
     }
 
     /**
@@ -52,6 +53,6 @@ public class FootballRecordFactoryTest {
      */
     @Test
     void createFromTokens_nullTokens_shouldThrowException() {
-        assertThrows(NullPointerException.class, () -> factory.createFromTokens(null));
+        assertThrows(DataParseException.class, () -> factory.createFromTokens(null));
     }
 }

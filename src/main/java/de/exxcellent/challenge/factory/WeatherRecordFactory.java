@@ -1,6 +1,9 @@
 package de.exxcellent.challenge.factory;
 
+import de.exxcellent.challenge.errorhandling.DataParseException;
 import de.exxcellent.challenge.model.WeatherDataRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Factory class for creating WeatherDataRecord instances from an array of tokens.
@@ -8,13 +11,15 @@ import de.exxcellent.challenge.model.WeatherDataRecord;
  */
 public class WeatherRecordFactory implements DataRecordFactory<WeatherDataRecord>{
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(WeatherRecordFactory.class);
+
     /**
      * Creates a WeatherDataRecord from an array of tokens.
      * The first token is the day, the second is the maximum temperature,
      * and the third is the minimum temperature.
      *
-     * @param tokens an array of strings containing the day, max temperature, and min temperature
-     * @return a new WeatherDataRecord instance
+     * @param tokens an array of strings containing the day, max temperature, and min temperature.
+     * @return a new WeatherDataRecord instance.
      */
     @Override
     public final WeatherDataRecord createFromTokens(final String[] tokens) {
@@ -24,7 +29,8 @@ public class WeatherRecordFactory implements DataRecordFactory<WeatherDataRecord
             final int min = Integer.parseInt(tokens[2]);
             return new WeatherDataRecord(day, max, min);
         } catch (final Exception exception) {
-            throw new RuntimeException("Invalid weather line: " + String.join(" ", tokens));
+            LOGGER.error("Failed to parse weather record: {}", (Object) tokens);
+            throw new DataParseException("Invalid weather record input.");
         }
     }
 }

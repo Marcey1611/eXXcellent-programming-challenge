@@ -14,22 +14,22 @@ import java.util.Map;
  */
 public class WeatherDataParser implements DataParser<WeatherDataRecord> {
 
-    private final ParserUtils parserUtils;
-    private final WeatherRecordFactory recordFactory;
-
     private static final String COLUMN_NAME_DAY = "Day";
     private static final String COLUMN_NAME_MAX = "MxT";
     private static final String COLUMN_NAME_MIN = "MnT";
+
+    private final ParserUtils parserUtils;
+    private final WeatherRecordFactory recordFactory;
 
     /**
      * Constructs a WeatherDataParser with the specified ParserUtils and WeatherRecordFactory.
      *
      * @param parserUtils the utility class for parsing operations.
-     * @param factory the factory to create WeatherDataRecord instances.
+     * @param recordFactory the recordFactory to create WeatherDataRecord instances.
      */
-    public WeatherDataParser(final ParserUtils parserUtils, final WeatherRecordFactory factory) {
+    public WeatherDataParser(final ParserUtils parserUtils, final WeatherRecordFactory recordFactory) {
         this.parserUtils = parserUtils;
-        this.recordFactory = factory;
+        this.recordFactory = recordFactory;
     }
 
     /**
